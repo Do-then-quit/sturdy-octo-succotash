@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lecture_10proj/toDoList.dart';
 import 'character.dart';
 
 void main() => runApp(MyApp());
@@ -26,18 +27,18 @@ class _MainPageState extends State<MainPage> {
       'Index 0: Home',
     ),
     CharacterPage(),
-    Text(
-      'Index 2: School',
-    ),
+    ToDoList(),
   ];
 
   static List<Widget> _appBarOptions = <Widget>[
     Text(
       'Index 0: Home',
     ),
-    Text("Character"),
     Text(
-      'Index 2: School',
+      "Character",
+    ),
+    Text(
+      'Daily To-Do List',
     ),
   ];
 
@@ -67,8 +68,8 @@ class _MainPageState extends State<MainPage> {
             label: 'Character',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
+            icon: Icon(Icons.check_box_outlined),
+            label: 'To-Do List',
           ),
         ],
         currentIndex: _selectedIndex,
