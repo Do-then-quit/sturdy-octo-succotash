@@ -32,6 +32,12 @@ class _ToDoListState extends State<ToDoList> {
     });
   }
 
+  void _deleteTodo(Todo todo) {
+    setState(() {
+      _items.remove(todo);
+    });
+  }
+
   Widget _buildItemWidget(Todo todo) {
     return Column(
       children: [
@@ -41,6 +47,10 @@ class _ToDoListState extends State<ToDoList> {
             activeColor: Colors.blue,
             value: todo.isDone,
             title: Text(todo.title),
+            secondary: IconButton(
+              icon: Icon(Icons.delete_outline),
+              onPressed: () => _deleteTodo(todo),
+            ),
             onChanged: (bool newValue) {
               setState(() {
                 todo.isDone = newValue;
@@ -72,9 +82,11 @@ class _ToDoListState extends State<ToDoList> {
           ],
         ),
         Expanded(
-          child: ListView(
-            children: _items.map((todo) => _buildItemWidget(todo)).toList(),
-            padding: EdgeInsets.all(10),
+          child: Scrollbar(
+            child: ListView(
+              children: _items.map((todo) => _buildItemWidget(todo)).toList(),
+              padding: EdgeInsets.all(10),
+            ),
           ),
         )
       ],
