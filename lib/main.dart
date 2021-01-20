@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lecture_10proj/toDoList.dart';
 import 'character.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
