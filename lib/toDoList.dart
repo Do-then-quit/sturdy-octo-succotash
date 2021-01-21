@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class Todo {
   bool isDone;
@@ -17,31 +16,6 @@ class ToDoList extends StatefulWidget {
 }
 
 class _ToDoListState extends State<ToDoList> {
-  bool _initialized = false;
-  bool _error = false;
-
-  // Define an async function to initialize FlutterFire
-  void initializeFlutterFire() async {
-    try {
-      // Wait for Firebase to initialize and set `_initialized` state to true
-      await Firebase.initializeApp();
-      setState(() {
-        _initialized = true;
-      });
-    } catch (e) {
-      // Set `_error` state to true if Firebase initialization fails
-      setState(() {
-        _error = true;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    initializeFlutterFire();
-    super.initState();
-  }
-
   var _todoController = TextEditingController();
   @override
   void dispose() {
@@ -108,28 +82,35 @@ class _ToDoListState extends State<ToDoList> {
             ],
           ),
         ),
-        StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('todo').snapshots(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasError) {
-                return Text('Something Wrong');
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("Loading");
-              }
-              var documents = snapshot.data.documents;
-
-              return Expanded(
-                child: Scrollbar(
-                  child: ListView(
-                    children:
-                        documents.map((doc) => _buildItemWidget(doc)).toList(),
-                    padding: EdgeInsets.all(10),
-                  ),
-                ),
-              );
-            })
+        UserInformation(),
       ],
+    );
+  }
+}
+
+class UserInformation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('todo');
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: users.snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Loading");
+        }
+        return ListView(
+          children: snapshot.data.docs.map((DocumentSnapshot document) {
+            return ListTile(
+              title: Text(document.data()['title']),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
